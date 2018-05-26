@@ -28,6 +28,11 @@ def cliHandler(args):
     if FLAGS.demo:
         tfnet.camera()
         exit('Demo stopped, exit.')
+    
+    if FLAGS.attack:
+        print('Enter attacking...')
+        tfnet.attack()
+	exit('finished attacking')
 
     if FLAGS.train:
         print('Enter training ...'); tfnet.train()
