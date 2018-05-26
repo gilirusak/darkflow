@@ -66,7 +66,7 @@ def loss(self, net_out):
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
     confs = tf.multiply(best_box, _confs)
-
+    
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs
     weight_coo = tf.concat(4 * [tf.expand_dims(confs, -1)], 3)

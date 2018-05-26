@@ -29,7 +29,7 @@ def postprocess(self, net_out, im, save = True):
 	Takes net output, draw net_out, save to disk
 	"""
 	boxes = self.findboxes(net_out)
-
+	print("boxes", boxes)
 	# meta
 	meta = self.meta
 	threshold = meta['thresh']

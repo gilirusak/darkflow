@@ -34,6 +34,7 @@ def _batch(self, chunk):
     allobj = deepcopy(allobj_)
     path = os.path.join(self.FLAGS.dataset, jpg)
     img = self.preprocess(path, allobj)
+    print("img from _batch", np.sum(np.abs(img)))
 
     # Calculate regression target
     cellx = 1. * w / S
@@ -103,15 +104,19 @@ def shuffle(self):
 
     for i in range(self.FLAGS.epoch):
         shuffle_idx = perm(np.arange(size))
-        for b in range(batch_per_epoch):
+        if self.FLAGS.attack:
+		shuffle_idx = np.arange(size)
+	for b in range(batch_per_epoch):
             # yield these
             x_batch = list()
             feed_batch = dict()
 
             for j in range(b*batch, b*batch+batch):
                 train_instance = data[shuffle_idx[j]]
+		print("train_instance", train_instance)
                 try:
                     inp, new_feed = self._batch(train_instance)
+	       	    print("inp in shuffle in data,.py", np.sum(np.abs(inp)))
                 except ZeroDivisionError:
                     print("This image's width or height are zeros: ", train_instance[0])
                     print('train_instance:', train_instance)

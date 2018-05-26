@@ -1,3 +1,4 @@
+
 import tensorflow.contrib.slim as slim
 import pickle
 import tensorflow as tf
@@ -60,6 +61,15 @@ def loss(self, net_out):
     adjusted_coords_wh = tf.sqrt(tf.exp(coords[:,:,:,2:4]) * np.reshape(anchors, [1, 1, B, 2]) / np.reshape([W, H], [1, 1, 1, 2]))
     coords = tf.concat([adjusted_coords_xy, adjusted_coords_wh], 3)
 
+    # added attack
+    threshold = m['thresh'] - 0.05
+    threshold_tf = tf.constant(threshold, dtype = tf.float32)
+    adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, 4])
+    thresholded_confidence = tf.nn.relu(adjusted_c - threshold_tf)
+    thresholded_confidence = tf.Print(thresholded_confidence, [tf.reduce_max(thresholded_confidence)], message="thresholded_confidence", summarize=1000)
+    self.loss = -tf.reduce_sum(thresholded_confidence)
+    return 
+
     adjusted_c = expit_tensor(net_out_reshape[:, :, :, :, 4])
     adjusted_c = tf.reshape(adjusted_c, [-1, H*W, B, 1])
 
@@ -95,7 +105,7 @@ def loss(self, net_out):
     proid = sprob * weight_pro
 
     self.fetch += [_probs, confs, conid, cooid, proid]
-    true = tf.concat([_coord, tf.expand_dims(confs, 3), _probs ], 3)
+    true = tf.concat([_coord, 0*tf.expand_dims(confs, 3), _probs ], 3)
     wght = tf.concat([cooid, tf.expand_dims(conid, 3), proid ], 3)
 
     print('Building {} loss'.format(m['model']))
@@ -104,4 +114,5 @@ def loss(self, net_out):
     loss = tf.reshape(loss, [-1, H*W*B*(4 + 1 + C)])
     loss = tf.reduce_sum(loss, 1)
     self.loss = .5 * tf.reduce_mean(loss)
+    self.loss *= -1
     tf.summary.scalar('{} loss'.format(m['model']), self.loss)
