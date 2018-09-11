@@ -58,10 +58,10 @@ def preprocess(self, im, allobj = None):
 	if type(im) is not np.ndarray:
 		print("Image path in preprocess", im)
 		im = cv2.imread(im)
-	print("predict.py in preprocess before", np.sum(np.abs(im)))
+	# print("predict.py in preprocess before", np.sum(np.abs(im)))
 	# print(im.shape)
 	if not self.FLAGS.attack:
-		print("entered TRAIN-only section")
+		# print("entered TRAIN-only section")
 		if allobj is not None: # in training mode
 			result = imcv2_affine_trans(im)
 			im, dims, trans_param = result
@@ -75,7 +75,7 @@ def preprocess(self, im, allobj = None):
 			im = imcv2_recolor(im)
 
 	im = self.resize_input(im)
-	print("predict.py in preprocess after", np.sum(np.abs(im)))
+	# print("predict.py in preprocess after", np.sum(np.abs(im)))
 	if allobj is None: return im
 	return im#, np.array(im) # for unit testing
 
