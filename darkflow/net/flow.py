@@ -109,66 +109,65 @@ def attack(self):
         print("boxes",boxes)
 
         print(x_batch)
-	for k, img in enumerate(x_batch):	
-		#print("WRITING TO..." + str(i))
-		# adjusted = np.round(x_batch.copy()[1]*255.0) #[:,:,::-1]
-		#adjusted = np.round(img * 255.0)
-		#img = Image.fromarray(adjusted.astype(np.uint8), 'RGB')
-		print("return_predict",self.return_predict(np.asarray(img).astype(np.float32)))
-		# img.save('batched_'+str(i*100 + k)+'.png')
-		# img.show()
-    	for j in range(num_steps):
-          feed_dict = {
-            loss_ph[key]: datum[key] 
-                for key in loss_ph }
-          feed_dict[self.inp] = adversarial_x
-          # feed_dict.update(self.feed)
 
-          feed_dict = {self.inp: adversarial_x}
-      	  gradients_np, loss_np, out_np = self.sess.run([gradients_op, loss_op, self.out], feed_dict=feed_dict)
-          out_reshape = out_np.reshape(-1, 13, 13, 5, 6)
-          adjusted_c = out_reshape[:, :, :, :, 4]
-          adjusted_c = 1.0 / (1.0 + np.exp(-adjusted_c))
-          print("max adjusted_c", np.max(adjusted_c))
-          print("loss", loss_np)
-           # values = sess.run(logits, feed_dict={x_ph:adversarial_x})
-    	  # print(values)
-          adversarial_x += epsilon / num_steps * np.sign(gradients_np)
-          # clipping
-       	  adversarial_x = np.clip(np.clip(adversarial_x, x_batch - epsilon, x_batch + epsilon), 0, 1)
-	  print("shape", adversarial_x.shape)
-	  #adjusted = np.round(adversarial_x[0] * 255.0)
-          #img = Image.fromarray(adjusted.astype(np.uint8), 'RGB')
-          print("return_predict", self.return_predict(adversarial_x[0]))
+    for k, img in enumerate(x_batch):
+        #print("WRITING TO..." + str(i))
+        # adjusted = np.round(x_batch.copy()[1]*255.0) #[:,:,::-1]
+        #adjusted = np.round(img * 255.0)
+        #img = Image.fromarray(adjusted.astype(np.uint8), 'RGB')
+        print("return_predict",self.return_predict(np.asarray(img).astype(np.float32)))
+        # img.save('batched_'+str(i*100 + k)+'.png')
+        # img.show()
+        for j in range(num_steps):
+            feed_dict = {loss_ph[key]: datum[key] for key in loss_ph }
+            feed_dict[self.inp] = adversarial_x
+            # feed_dict.update(self.feed)
 
-          if (j > 0) and ((j % 4) == 0):
-              adv_print = np.round(adversarial_x[0] * 255.0)
-              pil_img = Image.fromarray(adv_print.astype(np.uint8), 'RGB')
-              adversarial_x[0] = np.asarray(pil_img).astype(np.float32) / 255.
-              print("return_predict after", self.return_predict(adversarial_x[0]))
-	
-	# print(adversarial_x[0])
+            feed_dict = {self.inp: adversarial_x}
+            gradients_np, loss_np, out_np = self.sess.run([gradients_op, loss_op, self.out], feed_dict=feed_dict)
+            out_reshape = out_np.reshape(-1, 13, 13, 5, 6)
+            adjusted_c = out_reshape[:, :, :, :, 4]
+            adjusted_c = 1.0 / (1.0 + np.exp(-adjusted_c))
+            print("max adjusted_c", np.max(adjusted_c))
+            print("loss", loss_np)
+            # values = sess.run(logits, feed_dict={x_ph:adversarial_x})
+            # print(values)
+            adversarial_x += epsilon / num_steps * np.sign(gradients_np)
+            # clipping
+            adversarial_x = np.clip(np.clip(adversarial_x, x_batch - epsilon, x_batch + epsilon), 0, 1)
+            print("shape", adversarial_x.shape)
+            #adjusted = np.round(adversarial_x[0] * 255.0)
+            #img = Image.fromarray(adjusted.astype(np.uint8), 'RGB')
+            print("return_predict", self.return_predict(adversarial_x[0]))
+
+            if (j > 0) and ((j % 4) == 0):
+                adv_print = np.round(adversarial_x[0] * 255.0)
+                pil_img = Image.fromarray(adv_print.astype(np.uint8), 'RGB')
+                adversarial_x[0] = np.asarray(pil_img).astype(np.float32) / 255.
+                print("return_predict after", self.return_predict(adversarial_x[0]))
+
+    # print(adversarial_x[0])
         # plt.plot(adversarial_x[0])
-	# print(adversarial_x.shape)
+    # print(adversarial_x.shape)
         # return adversarial_x
-	# if i == 1:
-	for k, img in enumerate(adversarial_x):
-		# adv_print = np.round(adversarial_x.copy()[1]*255.0) #[:,:,::-1]
-		print("--------------------------------------------------------------")
-		#print("Before")
-		#print(self.return_predict(img))
-		print("shape", img.shape)
-		adv_print = np.round(img * 255.0)
-		pil_img = Image.fromarray(adv_print.astype(np.uint8), 'RGB')
-		print("After")
-		img_arr = np.asarray(pil_img).astype(np.float32) / 255.
-		print("shape", img_arr.shape)
-		print(self.return_predict(img_arr))
-		pil_img.save('new_adv_'+str(i*100 + k)+'.png')
+    # if i == 1:
+    for k, img in enumerate(adversarial_x):
+        # adv_print = np.round(adversarial_x.copy()[1]*255.0) #[:,:,::-1]
+        print("--------------------------------------------------------------")
+        #print("Before")
+        #print(self.return_predict(img))
+        print("shape", img.shape)
+        adv_print = np.round(img * 255.0)
+        pil_img = Image.fromarray(adv_print.astype(np.uint8), 'RGB')
+        print("After")
+        img_arr = np.asarray(pil_img).astype(np.float32) / 255.
+        print("shape", img_arr.shape)
+        print(self.return_predict(img_arr))
+        pil_img.save('new_adv_'+str(i*100 + k)+'.png')
 
 def return_predict(self, im):
     assert isinstance(im, np.ndarray), \
-				'Image is not a np.ndarray'
+                'Image is not a np.ndarray'
     h, w, _ = im.shape
     #im = self.framework.resize_input(im)
     this_inp = np.expand_dims(im, 0)
@@ -233,20 +232,20 @@ def predict(self):
         inp_feed = pool.map(lambda inp: (
             np.expand_dims(self.framework.preprocess(
                 os.path.join(inp_path, inp)), 0)), this_batch)
-	#print("inp_feed", inp_feed)
+        #print("inp_feed", inp_feed)
         # Feed to the net
         feed_dict = {self.inp : np.concatenate(inp_feed, 0)}    
         self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
 
-	img = feed_dict[self.inp]
-	print("img: {}".format(np.sum(np.abs(img))))
+        img = feed_dict[self.inp]
+        print("img: {}".format(np.sum(np.abs(img))))
 
         start = time.time()
         out = self.sess.run(self.out, feed_dict)
         stop = time.time(); last = stop - start
         self.say('Total time = {}s / {} inps = {} ips'.format(
             last, len(inp_feed), len(inp_feed) / last))
-	print("out", np.sum(np.abs(out)))
+        print("out", np.sum(np.abs(out)))
 
         # Post processing
         self.say('Post processing {} inputs ...'.format(len(inp_feed)))
