@@ -75,7 +75,7 @@ def preprocess(self, im, allobj = None):
 			im = imcv2_recolor(im)
 
 	im = self.resize_input(im)
-        print("predict.py in preprocess after", np.sum(np.abs(im)))
+	print("predict.py in preprocess after", np.sum(np.abs(im)))
 	if allobj is None: return im
 	return im#, np.array(im) # for unit testing
 
