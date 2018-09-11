@@ -32,7 +32,7 @@ def cliHandler(args):
     if FLAGS.attack:
         print('Enter attacking...')
         tfnet.attack()
-	exit('finished attacking')
+        exit('finished attacking')
 
     if FLAGS.train:
         print('Enter training ...'); tfnet.train()
