@@ -176,17 +176,6 @@ def return_predict(self, im):
     print("img", np.sum(np.abs(this_inp)))
 
     out = self.sess.run(self.out, feed_dict)[0]
-    """print("out", np.sum(np.abs(out)))
-
-    out_reshape = out.reshape(-1, 13, 13, 5, 6)
-    adjusted_c = out_reshape[:, :, :, :, 4]
-    adjusted_c = 1.0 / (1.0 + np.exp(-adjusted_c))
-    print("max adjusted_c", np.max(adjusted_c))
-
-    boxes = self.framework.findboxes(out.copy())
-    print("boxes",boxes)
-    print("confidences", [b.c for b in boxes])
-    #print("feed_dict", feed_dict)"""
     boxes = self.framework.findboxes(out)
     threshold = self.FLAGS.threshold
     boxesInfo = list()
