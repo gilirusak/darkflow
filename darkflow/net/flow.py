@@ -169,14 +169,14 @@ def return_predict(self, im):
     assert isinstance(im, np.ndarray), \
                 'Image is not a np.ndarray'
     h, w, _ = im.shape
-    #im = self.framework.resize_input(im)
+    im = self.framework.resize_input(im)
     this_inp = np.expand_dims(im, 0)
     feed_dict = {self.inp : this_inp}
 
     print("img", np.sum(np.abs(this_inp)))
 
     out = self.sess.run(self.out, feed_dict)[0]
-    print("out", np.sum(np.abs(out)))
+    """print("out", np.sum(np.abs(out)))
 
     out_reshape = out.reshape(-1, 13, 13, 5, 6)
     adjusted_c = out_reshape[:, :, :, :, 4]
@@ -186,7 +186,8 @@ def return_predict(self, im):
     boxes = self.framework.findboxes(out.copy())
     print("boxes",boxes)
     print("confidences", [b.c for b in boxes])
-    #print("feed_dict", feed_dict)
+    #print("feed_dict", feed_dict)"""
+    boxes = self.framework.findboxes(out)
     threshold = self.FLAGS.threshold
     boxesInfo = list()
     for box in boxes:
@@ -237,8 +238,8 @@ def predict(self):
         feed_dict = {self.inp : np.concatenate(inp_feed, 0)}    
         self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
 
-        img = feed_dict[self.inp]
-        print("img: {}".format(np.sum(np.abs(img))))
+        # img = feed_dict[self.inp]
+        # print("img: {}".format(np.sum(np.abs(img))))
 
         start = time.time()
         out = self.sess.run(self.out, feed_dict)
